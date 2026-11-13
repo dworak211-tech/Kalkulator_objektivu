@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kalkulátor objektivu</title>
+<style>
+:root{--bg:#eef1f4;--panel:#fff;--ink:#16212b;--mute:#5b6b79;--line:#ccd5dd;--ok:#0b7a4b;--okbg:#dff3e8;--no:#9a3a2b;--nobg:#f6e3df;--acc:#0a5a8c}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#10171d;--panel:#18222b;--ink:#e6edf3;--mute:#93a4b3;--line:#2c3a46;--ok:#58d19a;--okbg:#14352a;--no:#f0a090;--nobg:#3a211c;--acc:#6cb8ee}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.45 "Segoe UI",system-ui,sans-serif;padding:max(16px,env(safe-area-inset-top)) 16px max(24px,env(safe-area-inset-bottom))}
+main{max-width:720px;margin:0 auto}
+h1{font-size:1.4rem;margin:.2em 0 1rem}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
+label{display:flex;flex-direction:column;gap:4px;font-size:.9rem;color:var(--mute)}
+input,select,button{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:9px 10px;min-height:44px}
+input:read-only{opacity:.7}
+input:focus-visible,select:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+button{cursor:pointer}
+.big{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.big b{font-size:3rem;line-height:1;font-variant-numeric:tabular-nums;color:var(--acc)}
+.big span{color:var(--mute)}
+.lens{border-radius:8px;padding:12px 14px;margin-top:10px;border:1px solid var(--line);border-left-width:6px}
+.lens.ok{background:var(--okbg);border-left-color:var(--ok)}
+.lens.no{background:var(--nobg);border-left-color:var(--no)}
+.lens h3{margin:0 0 4px;font-size:1.05rem;display:flex;justify-content:space-between;gap:8px}
+.lens.ok h3 em{color:var(--ok)}.lens.no h3 em{color:var(--no)}
+.lens h3 em{font-style:normal;font-size:.9rem}
+.lens p{margin:2px 0;font-size:.92rem}
+.row{display:grid;gap:8px;margin-top:8px}
+details{margin-bottom:8px}
+.row input{min-width:0;width:100%}
+summary{cursor:pointer;font-weight:600;padding:4px 0}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.hint{color:var(--mute);font-size:.85rem;margin:8px 0 0}
+</style>
+</head>
+<body>
+<main>
+<h1>Kalkulátor objektivu</h1>
+
+<section class="panel" aria-label="Zadání">
+  <div class="grid">
+    <label>Plátno z databáze<select id="sc"></select></label>
+    <label>Projektor<select id="pj"></select></label>
+  </div>
+  <div class="grid" style="margin-top:12px">
+    <label>Šířka plátna (m)<input id="w" inputmode="decimal" value="3"></label>
+    <label>Poměr stran
+      <select id="ar"><option value="1.7778">16:9</option><option value="1.6">16:10</option><option value="1.3333">4:3</option><option value="1">1:1</option><option value="0">Vlastní</option></select>
+    </label>
+    <label>Výška plátna (m)<input id="h" inputmode="decimal" readonly></label>
+    <label>Vzdálenost od plátna (m)<input id="d" inputmode="decimal" value="6"></label>
+  </div>
+  <p class="hint">Vzdálenost se měří od objektivu projektoru k plátnu.</p>
+</section>
+
+<section class="panel" aria-live="polite">
+  <div class="big"><b id="tr">–</b><span>potřebný poměr projekce (vzdálenost : šířka)</span></div>
+  <div id="res"></div>
+</section>
+
+<section class="panel">
+  <details><summary>Objektivy</summary><p class="hint">Poměr projekce (min–max) opiš z katalogového listu. Bajonet je řada, na kterou objektiv pasuje; prázdný znamená „pasuje všude“. Předvyplněné řádky jsou jen ukázka.</p><div id="L-lenses"></div><div class="acts"><button data-add="lenses" type="button">Přidat objektiv</button></div></details>
+  <details><summary>Projektory</summary><p class="hint">Bajonet musí být zapsaný stejně jako u objektivů.</p><div id="L-projectors"></div><div class="acts"><button data-add="projectors" type="button">Přidat projektor</button></div></details>
+  <details><summary>Plátna</summary><div id="L-screens"></div><div class="acts"><button data-add="screens" type="button">Přidat plátno</button></div></details>
+  <div class="acts"><button id="exp" type="button">Exportovat vše</button><button id="imp" type="button">Importovat</button><input id="file" type="file" accept=".json,application/json" hidden></div>
+  <datalist id="mounts"></datalist>
+</section>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+const num=s=>parseFloat(String(s).replace(',','.'));
+const f=(n,d=2)=>n.toLocaleString('cs-CZ',{minimumFractionDigits:d,maximumFractionDigits:d});
+const KEY='objektivy-v2';
+let DB={
+ lenses:[{n:'Krátký (ukázka)',a:0.8,b:1.0,m:'Řada A'},{n:'Standardní (ukázka)',a:1.3,b:1.8,m:'Řada A'},{n:'Dlouhý (ukázka)',a:1.8,b:2.8,m:'Řada A'}],
+ projectors:[{n:'Projektor 1 (ukázka)',m:'Řada A'}],
+ screens:[{n:'Plátno 3 m 16:9 (ukázka)',w:3,h:1.69}]};
+try{const s=localStorage.getItem(KEY);if(s)DB=JSON.parse(s);else{const o=localStorage.getItem('objektivy-v1');if(o)DB.lenses=JSON.parse(o).map(l=>({...l,m:''}))}}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){}};
+const SCH={
+ lenses:[['n','Název','t'],['a','Min','n'],['b','Max','n'],['m','Bajonet','t']],
+ projectors:[['n','Název','t'],['m','Bajonet','t']],
+ screens:[['n','Název','t'],['w','Šířka m','n'],['h','Výška m','n']]};
+const NEW={lenses:{n:'Nový objektiv',a:1,b:1.5,m:''},projectors:{n:'Nový projektor',m:''},screens:{n:'Nové plátno',w:3,h:1.69}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const same=(a,b)=>String(a||'').trim().toLowerCase()===String(b||'').trim().toLowerCase();
+
+function syncHeight(){
+  const r=num($('ar').value),w=num($('w').value),h=$('h');
+  h.readOnly=r!==0;
+  if(r!==0)h.value=w>0?f(w/r,2):'';
+}
+function calc(){
+  syncHeight();
+  const w=num($('w').value),d=num($('d').value),res=$('res');
+  if(!(w>0&&d>0)){$('tr').textContent='–';res.innerHTML='<p class="hint">Zadej šířku plátna a vzdálenost.</p>';return}
+  const t=d/w,pi=$('pj').value,mount=pi!==''&&DB.projectors[pi]?DB.projectors[pi].m:'';
+  $('tr').textContent=f(t,2)+':1';
+  const list=DB.lenses.filter(l=>l.a>0&&l.b>=l.a&&(!mount||!l.m||same(l.m,mount))).map(l=>({l,ok:t>=l.a-1e-9&&t<=l.b+1e-9}));
+  list.sort((x,y)=>y.ok-x.ok);
+  if(!list.length){res.innerHTML='<p class="hint">Žádný objektiv'+(mount?' pro bajonet „'+esc(mount)+'“':'')+' v databázi není.</p>';return}
+  res.innerHTML=list.map(({l,ok})=>{
+    const dmin=l.a*w,dmax=l.b*w,wmin=d/l.b,wmax=d/l.a;
+    let note='';
+    if(!ok)note=t<l.a?`Příliš dlouhý objektiv: obraz by byl širší než plátno (${f(wmax)} m).`:`Obraz by byl menší než plátno (nejvíc ${f(wmin)} m na šířku).`;
+    return `<div class="lens ${ok?'ok':'no'}"><h3><span>${esc(l.n)} <small>(${f(l.a)}–${f(l.b)}:1${l.m?', '+esc(l.m):''})</small></span><em>${ok?'Vyhovuje':'Nevyhovuje'}</em></h3>
+    <p>Pro toto plátno: ${f(dmin)} až ${f(dmax)} m od plátna.</p>
+    <p>Z ${f(d,1)} m dá obraz o šířce ${f(wmin)} až ${f(wmax)} m.</p>${note?`<p>${note}</p>`:''}</div>`}).join('');
+}
+function fillSel(id,items,first){
+  const el=$(id),v=el.value;
+  el.innerHTML=`<option value="">${first}</option>`+items.map((x,i)=>`<option value="${i}">${esc(x.n)}</option>`).join('');
+  el.value=items[v]?v:'';
+}
+function refreshSel(){
+  fillSel('sc',DB.screens,'Vlastní rozměr');
+  fillSel('pj',DB.projectors,'Všechny objektivy');
+  const m=new Set([...DB.lenses,...DB.projectors].map(x=>x.m).filter(Boolean));
+  $('mounts').innerHTML=[...m].map(x=>`<option value="${esc(x)}">`).join('');
+}
+function draw(k){
+  const sc=SCH[k];
+  $('L-'+k).innerHTML=DB[k].map((x,i)=>`<div class="row" style="grid-template-columns:1fr ${'90px '.repeat(sc.length-1)}44px">`+
+   sc.map(([key,lab,ty])=>`<input data-k="${k}" data-i="${i}" data-f="${key}" ${ty==='n'?'inputmode="decimal"':''} ${key==='m'?'list="mounts"':''} value="${esc(x[key]??'')}" placeholder="${lab}" aria-label="${lab}">`).join('')+
+   `<button data-del="${k}:${i}" type="button" aria-label="Smazat">✕</button></div>`).join('');
+}
+const drawAll=()=>{Object.keys(SCH).forEach(draw);refreshSel();calc()};
+document.addEventListener('input',e=>{
+  const d=e.target.dataset;if(d.k==null)return;
+  const ty=SCH[d.k].find(c=>c[0]===d.f)[2];
+  DB[d.k][d.i][d.f]=ty==='t'?e.target.value:(num(e.target.value)||0);
+  save();refreshSel();calc();
+});
+document.addEventListener('click',e=>{
+  const t=e.target;
+  if(t.dataset.add){DB[t.dataset.add].push({...NEW[t.dataset.add]});save();drawAll()}
+  if(t.dataset.del){const[k,i]=t.dataset.del.split(':');DB[k].splice(i,1);save();drawAll()}
+});
+$('sc').onchange=()=>{
+  const s=DB.screens[$('sc').value];if(!s)return;
+  $('ar').value='0';$('w').value=String(s.w).replace('.',',');$('h').value=String(s.h).replace('.',',');calc();
+};
+$('exp').onclick=()=>{
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([JSON.stringify(DB,null,2)],{type:'application/json'}));
+  a.download='databaze-projekce.json';a.click();
+};
+$('imp').onclick=()=>$('file').click();
+$('file').onchange=async e=>{
+  try{const j=JSON.parse(await e.target.files[0].text());
+    const L=Array.isArray(j)?j:j.lenses;
+    if(!Array.isArray(L))throw 0;
+    DB={lenses:L.map(x=>({n:String(x.n),a:+x.a||0,b:+x.b||0,m:String(x.m||'')})),
+        projectors:(j.projectors||DB.projectors).map(x=>({n:String(x.n),m:String(x.m||'')})),
+        screens:(j.screens||DB.screens).map(x=>({n:String(x.n),w:+x.w||0,h:+x.h||0}))};
+    save();drawAll()}
+  catch(err){alert('Soubor se nepodařilo načíst.')}
+  e.target.value='';
+};
+['w','d','h','ar','pj'].forEach(id=>$(id).addEventListener('input',calc));
+drawAll();
+</script>
+</body>
+</html>
