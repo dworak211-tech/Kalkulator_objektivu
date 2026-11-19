@@ -1,0 +1,610 @@
+{
+ "lenses": [
+  {
+   "n": "ET-D3LEW300 · 4 ks [WUXGA]",
+   "a": 0.77,
+   "b": 0.933,
+   "m": "Panasonic D75LE · WUXGA",
+   "su": 55,
+   "sd": 55,
+   "sh": 20
+  },
+  {
+   "n": "ET-D75LE50 FIX · 1 ks [WUXGA]",
+   "a": 0.694,
+   "b": 0.694,
+   "m": "Panasonic D75LE · WUXGA",
+   "su": 0,
+   "sd": 0,
+   "sh": 0
+  },
+  {
+   "n": "ET-D75LE6 · 2 ks [WUXGA]",
+   "a": 0.924,
+   "b": 1.1,
+   "m": "Panasonic D75LE · WUXGA",
+   "su": 44,
+   "sd": 44,
+   "sh": 15
+  },
+  {
+   "n": "ET-D75LE10 · 2 ks [WUXGA]",
+   "a": 1.3,
+   "b": 1.67,
+   "m": "Panasonic D75LE · WUXGA",
+   "su": 55,
+   "sd": 55,
+   "sh": 20
+  },
+  {
+   "n": "ET-D75LE20 · 2 ks [WUXGA]",
+   "a": 1.67,
+   "b": 2.41,
+   "m": "Panasonic D75LE · WUXGA",
+   "su": 55,
+   "sd": 55,
+   "sh": 20
+  },
+  {
+   "n": "ET-D75LE30 · 2 ks [WUXGA]",
+   "a": 2.4,
+   "b": 4.66,
+   "m": "Panasonic D75LE · WUXGA",
+   "su": 55,
+   "sd": 55,
+   "sh": 20
+  },
+  {
+   "n": "ET-D3LET30 · 2 ks [WUXGA]",
+   "a": 2.4,
+   "b": 4.66,
+   "m": "Panasonic D75LE · WUXGA",
+   "su": 55,
+   "sd": 55,
+   "sh": 20
+  },
+  {
+   "n": "ET-D75LE40 · 1 ks [WUXGA]",
+   "a": 4.62,
+   "b": 7.38,
+   "m": "Panasonic D75LE · WUXGA",
+   "su": 55,
+   "sd": 55,
+   "sh": 20
+  },
+  {
+   "n": "ET-D75LE50 FIX · 1 ks [RZ12K]",
+   "a": 0.694,
+   "b": 0.694,
+   "m": "Panasonic D75LE · RZ12K",
+   "su": 0,
+   "sd": 0,
+   "sh": 0
+  },
+  {
+   "n": "ET-D75LE6 · 2 ks [RZ12K]",
+   "a": 0.924,
+   "b": 1.1,
+   "m": "Panasonic D75LE · RZ12K"
+  },
+  {
+   "n": "ET-D75LE10 · 2 ks [RZ12K]",
+   "a": 1.3,
+   "b": 1.67,
+   "m": "Panasonic D75LE · RZ12K"
+  },
+  {
+   "n": "ET-D75LE30 · 2 ks [RZ12K]",
+   "a": 2.4,
+   "b": 4.66,
+   "m": "Panasonic D75LE · RZ12K"
+  },
+  {
+   "n": "ET-D3LET30 · 2 ks [RZ12K]",
+   "a": 2.4,
+   "b": 4.66,
+   "m": "Panasonic D75LE · RZ12K"
+  },
+  {
+   "n": "ET-D75LE40 · 1 ks [RZ12K]",
+   "a": 4.62,
+   "b": 7.38,
+   "m": "Panasonic D75LE · RZ12K"
+  },
+  {
+   "n": "ET-D3LEW300 · 4 ks [4K+]",
+   "a": 0.825,
+   "b": 1.0,
+   "m": "Panasonic D75LE · 4K+",
+   "su": 59,
+   "sd": 59,
+   "sh": 29
+  },
+  {
+   "n": "ET-D75LE50 FIX · 1 ks [4K+]",
+   "a": 0.746,
+   "b": 0.746,
+   "m": "Panasonic D75LE · 4K+",
+   "su": 0,
+   "sd": 0,
+   "sh": 0
+  },
+  {
+   "n": "ET-D75LE6 · 2 ks [4K+]",
+   "a": 0.991,
+   "b": 1.18,
+   "m": "Panasonic D75LE · 4K+",
+   "su": 56,
+   "sd": 56,
+   "sh": 19
+  },
+  {
+   "n": "ET-D75LE10 · 2 ks [4K+]",
+   "a": 1.39,
+   "b": 1.79,
+   "m": "Panasonic D75LE · 4K+",
+   "su": 59,
+   "sd": 59,
+   "sh": 29
+  },
+  {
+   "n": "ET-D75LE20 · 2 ks [4K+]",
+   "a": 1.79,
+   "b": 2.59,
+   "m": "Panasonic D75LE · 4K+",
+   "su": 59,
+   "sd": 59,
+   "sh": 29
+  },
+  {
+   "n": "ET-D75LE30 · 2 ks [4K+]",
+   "a": 2.58,
+   "b": 5.0,
+   "m": "Panasonic D75LE · 4K+",
+   "su": 59,
+   "sd": 59,
+   "sh": 29
+  },
+  {
+   "n": "ET-D3LET30 · 2 ks [4K+]",
+   "a": 2.58,
+   "b": 5.0,
+   "m": "Panasonic D75LE · 4K+",
+   "su": 59,
+   "sd": 59,
+   "sh": 29
+  },
+  {
+   "n": "ET-D75LE40 · 1 ks [4K+]",
+   "a": 4.95,
+   "b": 7.91,
+   "m": "Panasonic D75LE · 4K+",
+   "su": 59,
+   "sd": 59,
+   "sh": 29
+  },
+  {
+   "n": "ET-DLE080 · 1 ks",
+   "a": 0.79,
+   "b": 0.99,
+   "m": "Panasonic 1DLP ET-DLE"
+  },
+  {
+   "n": "ET-DLE150 · 1 ks",
+   "a": 1.3,
+   "b": 1.89,
+   "m": "Panasonic 1DLP ET-DLE",
+   "su": 50,
+   "sd": 16,
+   "sh": 10
+  },
+  {
+   "n": "ET-DLE250 · 1 ks",
+   "a": 2.3,
+   "b": 3.64,
+   "m": "Panasonic 1DLP ET-DLE",
+   "su": 50,
+   "sd": 16,
+   "sh": 10
+  },
+  {
+   "n": "ET-DLE350 · 1 ks",
+   "a": 3.6,
+   "b": 5.4,
+   "m": "Panasonic 1DLP ET-DLE",
+   "su": 50,
+   "sd": 16,
+   "sh": 10
+  },
+  {
+   "n": "ET-DLE450 · 1 ks",
+   "a": 5.4,
+   "b": 8.6,
+   "m": "Panasonic 1DLP ET-DLE",
+   "su": 50,
+   "sd": 16,
+   "sh": 10
+  },
+  {
+   "n": "TKGF 0156 (= ET-DLE170, dodaný) · 1 ks",
+   "a": 1.7,
+   "b": 2.4,
+   "m": "Panasonic 1DLP ET-DLE",
+   "su": 50,
+   "sd": 16,
+   "sh": 10
+  },
+  {
+   "n": "dodaný objektiv",
+   "a": 1.6,
+   "b": 2.8,
+   "m": "Panasonic MZ770",
+   "su": 67,
+   "sd": 67,
+   "sh": 35
+  },
+  {
+   "n": "ET-ELW22 · 4 ks",
+   "a": 0.786,
+   "b": 0.983,
+   "m": "Panasonic MZ770",
+   "su": 60,
+   "sd": 60,
+   "sh": 30
+  },
+  {
+   "n": "ET-ELT22 · 4 ks",
+   "a": 2.72,
+   "b": 4.48,
+   "m": "Panasonic MZ770",
+   "su": 67,
+   "sd": 67,
+   "sh": 35
+  },
+  {
+   "n": "ET-ELT23 · 3 ks",
+   "a": 4.44,
+   "b": 7.12,
+   "m": "Panasonic MZ770",
+   "su": 67,
+   "sd": 67,
+   "sh": 35
+  },
+  {
+   "n": "dodaný objektiv",
+   "a": 1.61,
+   "b": 2.76,
+   "m": "Panasonic MZ882W",
+   "su": 67,
+   "sd": 67,
+   "sh": 35
+  },
+  {
+   "n": "ET-ELW22 · 4 ks",
+   "a": 0.786,
+   "b": 0.983,
+   "m": "Panasonic MZ882W",
+   "su": 60,
+   "sd": 60,
+   "sh": 30
+  },
+  {
+   "n": "ET-ELT22 · 4 ks",
+   "a": 2.72,
+   "b": 4.48,
+   "m": "Panasonic MZ882W",
+   "su": 67,
+   "sd": 67,
+   "sh": 35
+  },
+  {
+   "n": "ET-ELT23 · 3 ks",
+   "a": 4.44,
+   "b": 7.12,
+   "m": "Panasonic MZ882W",
+   "su": 67,
+   "sd": 67,
+   "sh": 35
+  },
+  {
+   "n": "dodaný objektiv (ET-ELS20)",
+   "a": 1.7,
+   "b": 2.8,
+   "m": "Panasonic EZ570",
+   "su": 60,
+   "sd": 60,
+   "sh": 10
+  },
+  {
+   "n": "LNS-S20 (Sanyo) · 2 ks",
+   "a": 1.7,
+   "b": 2.8,
+   "m": "Panasonic EZ570",
+   "su": 60,
+   "sd": 60,
+   "sh": 10
+  },
+  {
+   "n": "ET-ELT21 · 2 ks",
+   "a": 4.6,
+   "b": 7.2,
+   "m": "Panasonic EZ570",
+   "su": 60,
+   "sd": 60,
+   "sh": 10
+  },
+  {
+   "n": "dodaný objektiv",
+   "a": 1.09,
+   "b": 1.77,
+   "m": "Panasonic PT-VZ585N",
+   "su": 44,
+   "sd": 0,
+   "sh": 0
+  },
+  {
+   "n": "NP12ZL · 2 ks",
+   "a": 1.19,
+   "b": 1.56,
+   "m": "NEC PA · WUXGA",
+   "su": 50,
+   "sd": 10,
+   "sh": 30
+  },
+  {
+   "n": "NP13ZL · 2 ks",
+   "a": 1.5,
+   "b": 3.02,
+   "m": "NEC PA · WUXGA",
+   "su": 50,
+   "sd": 10,
+   "sh": 15
+  },
+  {
+   "n": "NP14ZL · 2 ks",
+   "a": 2.97,
+   "b": 4.79,
+   "m": "NEC PA · WUXGA",
+   "su": 50,
+   "sd": 10,
+   "sh": 30
+  },
+  {
+   "n": "NP30ZL · 2 ks",
+   "a": 0.79,
+   "b": 1.03,
+   "m": "NEC PA · WUXGA",
+   "su": 50,
+   "sd": 10,
+   "sh": 20
+  },
+  {
+   "n": "NP12ZL · 2 ks",
+   "a": 1.21,
+   "b": 1.58,
+   "m": "NEC PA · XGA",
+   "su": 50,
+   "sd": 10,
+   "sh": 30
+  },
+  {
+   "n": "NP13ZL · 2 ks",
+   "a": 1.53,
+   "b": 3.04,
+   "m": "NEC PA · XGA",
+   "su": 50,
+   "sd": 10,
+   "sh": 30
+  },
+  {
+   "n": "NP14ZL · 2 ks",
+   "a": 3.03,
+   "b": 4.86,
+   "m": "NEC PA · XGA",
+   "su": 50,
+   "sd": 10,
+   "sh": 30
+  },
+  {
+   "n": "NP30ZL · 2 ks",
+   "a": 0.79,
+   "b": 1.04,
+   "m": "NEC PA · XGA",
+   "su": 35,
+   "sd": 10,
+   "sh": 20
+  },
+  {
+   "n": "USL-901 · 1 ks",
+   "a": 0.8,
+   "b": 1.0,
+   "m": "Hitachi CP-X9100 · XGA"
+  },
+  {
+   "n": "SL-902 · 2 ks",
+   "a": 1.2,
+   "b": 1.8,
+   "m": "Hitachi CP-X9100 · XGA"
+  },
+  {
+   "n": "ML-904 · 2 ks",
+   "a": 2.5,
+   "b": 3.8,
+   "m": "Hitachi CP-X9100 · XGA"
+  },
+  {
+   "n": "LL-905 · 2 ks",
+   "a": 3.6,
+   "b": 5.8,
+   "m": "Hitachi CP-X9100 · XGA"
+  },
+  {
+   "n": "UL-906 · 2 ks",
+   "a": 5.7,
+   "b": 9.1,
+   "m": "Hitachi CP-X9100 · XGA"
+  },
+  {
+   "n": "ET-D75LE5 FIX · 1 ks [WUXGA]",
+   "a": 0.694,
+   "b": 0.694,
+   "m": "Panasonic D75LE · WUXGA",
+   "su": 0,
+   "sd": 0,
+   "sh": 0
+  },
+  {
+   "n": "ET-D75LE5 FIX · 1 ks [4K+]",
+   "a": 0.746,
+   "b": 0.746,
+   "m": "Panasonic D75LE · 4K+",
+   "su": 0,
+   "sd": 0,
+   "sh": 0
+  }
+ ],
+ "projectors": [
+  {
+   "n": "Panasonic PT-RZ21K",
+   "m": "Panasonic D75LE · WUXGA",
+   "r": "16:10"
+  },
+  {
+   "n": "Panasonic PT-RQ35K",
+   "m": "Panasonic D75LE · WUXGA",
+   "r": "16:10"
+  },
+  {
+   "n": "Panasonic PT-RZ12K",
+   "m": "Panasonic D75LE · RZ12K",
+   "r": "16:10"
+  },
+  {
+   "n": "Panasonic PT-RQ32K",
+   "m": "Panasonic D75LE · 4K+",
+   "r": "16:10"
+  },
+  {
+   "n": "Panasonic PT-RZ970",
+   "m": "Panasonic 1DLP ET-DLE",
+   "r": "16:10"
+  },
+  {
+   "n": "Panasonic PT-MZ770",
+   "m": "Panasonic MZ770",
+   "r": "16:10"
+  },
+  {
+   "n": "Panasonic PT-MZ882W",
+   "m": "Panasonic MZ882W",
+   "r": "16:10"
+  },
+  {
+   "n": "Panasonic PT-EZ570",
+   "m": "Panasonic EZ570",
+   "r": "16:10"
+  },
+  {
+   "n": "Panasonic PT-VZ585N",
+   "m": "Panasonic PT-VZ585N",
+   "r": "16:10"
+  },
+  {
+   "n": "NEC NP-PA621U",
+   "m": "NEC PA · WUXGA",
+   "r": "16:10"
+  },
+  {
+   "n": "NEC NP-PA722X",
+   "m": "NEC PA · XGA",
+   "r": "4:3"
+  },
+  {
+   "n": "Hitachi CP-X9100",
+   "m": "Hitachi CP-X9100 · XGA",
+   "r": "4:3"
+  }
+ ],
+ "screens": [
+  {
+   "n": "180x180 cm tripod · 2 ks",
+   "w": 1.8,
+   "h": 1.8
+  },
+  {
+   "n": "200x200 cm tripod · 1 ks",
+   "w": 2.0,
+   "h": 2.0
+  },
+  {
+   "n": "217x128 cm frame 16:9 · 1 ks",
+   "w": 2.17,
+   "h": 1.28
+  },
+  {
+   "n": "262x151 cm frame 16:9 · 2 ks",
+   "w": 2.62,
+   "h": 1.51
+  },
+  {
+   "n": "323,5x190 cm frame 16:9 · 4 ks",
+   "w": 3.235,
+   "h": 1.9
+  },
+  {
+   "n": "385x224 cm frame 16:9 · 2 ks",
+   "w": 3.85,
+   "h": 2.24
+  },
+  {
+   "n": "425x247 cm frame 16:9 · 4 ks",
+   "w": 4.25,
+   "h": 2.47
+  },
+  {
+   "n": "498x279 cm frame front · 2 ks",
+   "w": 4.98,
+   "h": 2.79
+  },
+  {
+   "n": "510x291 cm frame front · 2 ks",
+   "w": 5.1,
+   "h": 2.91
+  },
+  {
+   "n": "520x298 cm frame 16:9 · 2 ks",
+   "w": 5.2,
+   "h": 2.98
+  },
+  {
+   "n": "600x450 cm frame front · 1 ks",
+   "w": 6.0,
+   "h": 4.5
+  },
+  {
+   "n": "609x342 cm frame 16:9 · 2 ks",
+   "w": 6.09,
+   "h": 3.42
+  },
+  {
+   "n": "630x363 cm frame 16:9 · 2 ks",
+   "w": 6.3,
+   "h": 3.63
+  },
+  {
+   "n": "700x398 cm front (pouze povrch) · 1 ks",
+   "w": 7.0,
+   "h": 3.98
+  },
+  {
+   "n": "800x450 cm frame front 16:9 · 1 ks",
+   "w": 8.0,
+   "h": 4.5
+  },
+  {
+   "n": "Projekční Bobinet 14,5 x 15,5 m · 1 ks",
+   "w": 14.5,
+   "h": 15.5
+  }
+ ]
+}
