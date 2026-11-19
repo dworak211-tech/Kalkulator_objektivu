@@ -15,7 +15,7 @@ h1{font-size:1.4rem;margin:.2em 0 1rem}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px;margin-bottom:16px}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
 label{display:flex;flex-direction:column;gap:4px;font-size:.9rem;color:var(--mute)}
-input,select,button{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:9px 10px;min-height:44px}
+input,select,button,textarea{font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:9px 10px;min-height:44px}
 input:read-only{opacity:.7}
 input:focus-visible,select:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 button{cursor:pointer}
@@ -34,7 +34,35 @@ details{margin-bottom:8px}
 .row input{min-width:0;width:100%}
 summary{cursor:pointer;font-weight:600;padding:4px 0}
 .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.sum p{margin:12px 0 0;padding:10px 12px;border-radius:8px;border-left:6px solid var(--line);font-size:1.02rem}
+.sum .ok{background:var(--okbg);border-left-color:var(--ok)}
+.sum .no{background:var(--nobg);border-left-color:var(--no)}
 .hint{color:var(--mute);font-size:.85rem;margin:8px 0 0}
+textarea{width:100%;resize:vertical}
+h2{font-size:1.15rem;margin:0 0 12px}
+svg{width:100%;height:auto;display:block;margin-top:10px}
+.box{fill:var(--bg);stroke:var(--ink);stroke-width:1.5}
+.scr{stroke:var(--acc);stroke-width:5}
+.cone{fill:var(--acc);opacity:.13}
+.coneedge{stroke:var(--acc);stroke-dasharray:5 4;stroke-width:1.2}
+.scrrect{fill:var(--bg);stroke:var(--ink);stroke-width:2}
+.img{fill:none;stroke:var(--no);stroke-width:2;stroke-dasharray:6 4}
+.lbl{fill:var(--mute);font-size:12px;font-family:inherit}
+.dim line{stroke:var(--mute);stroke-width:1}
+.dim text{fill:var(--ink);font-size:13px;font-family:inherit}
+table.meta{width:100%;border-collapse:collapse;margin-top:12px}
+table.meta td{border-bottom:1px solid var(--line);padding:6px 8px;vertical-align:top;font-size:.95rem}
+table.meta td:first-child{color:var(--mute);width:36%}
+.warn{color:var(--no);font-weight:700}
+@media print{
+ @page{size:A4;margin:12mm}
+ :root,:root:not([data-theme=light]){--bg:#fff;--panel:#fff;--ink:#000;--mute:#333;--line:#999;--ok:#0b7a4b;--okbg:#fff;--no:#b00020;--nobg:#fff;--acc:#0a5a8c}
+ body{padding:0;background:#fff}
+ main>section:not(#sheet),main>h1,.np{display:none!important}
+ #sheet{border:none;padding:0;margin:0}
+ input,textarea{border:none;background:none;padding:0;min-height:0;resize:none;font-size:1rem}
+ svg{break-inside:avoid}
+}
 </style>
 </head>
 <body>
@@ -45,21 +73,36 @@ summary{cursor:pointer;font-weight:600;padding:4px 0}
   <div class="grid">
     <label>Plátno z databáze<select id="sc"></select></label>
     <label>Projektor<select id="pj"></select></label>
+    <label>Jednotky<select id="un"><option value="1">Metry</option><option value="100">Centimetry</option><option value="1000">Milimetry</option></select></label>
   </div>
   <div class="grid" style="margin-top:12px">
-    <label>Šířka plátna (m)<input id="w" inputmode="decimal" value="3"></label>
+    <label>Šířka plátna (<span class="u">m</span>)<input id="w" inputmode="decimal" value="3"></label>
     <label>Poměr stran
       <select id="ar"><option value="1.7778">16:9</option><option value="1.6">16:10</option><option value="1.3333">4:3</option><option value="1">1:1</option><option value="0">Vlastní</option></select>
     </label>
-    <label>Výška plátna (m)<input id="h" inputmode="decimal" readonly></label>
-    <label>Vzdálenost od plátna (m)<input id="d" inputmode="decimal" value="6"></label>
+    <label>Výška plátna (<span class="u">m</span>)<input id="h" inputmode="decimal" readonly></label>
+    <label>Vzdálenost od plátna (<span class="u">m</span>)<input id="d" inputmode="decimal" value="6"></label>
   </div>
   <p class="hint">Vzdálenost se měří od objektivu projektoru k plátnu.</p>
 </section>
 
 <section class="panel" aria-live="polite">
   <div class="big"><b id="tr">–</b><span>potřebný poměr projekce (vzdálenost : šířka)</span></div>
+  <div id="sum"></div>
   <div id="res"></div>
+</section>
+
+<section class="panel" id="sheet" aria-label="Schéma a podklad pro technika">
+  <h2>Schéma a podklad pro technika</h2>
+  <div class="grid">
+    <label>Název akce<input id="ev" placeholder="např. Konference, sál A"></label>
+    <label class="np">Objektiv ve schématu<select id="vl"></select></label>
+  </div>
+  <label style="margin-top:12px">Poznámka<textarea id="nt" rows="2" placeholder="místo, čas, kontakt, kabeláž…"></textarea></label>
+  <div id="meta"></div>
+  <div id="viz"></div>
+  <p class="hint">Schéma je orientační: nezahrnuje posun objektivu (lens shift) ani výšku projektoru. Vzdálenost se měří od objektivu k plátnu.</p>
+  <div class="acts np"><button id="prt" type="button">Vytisknout / uložit PDF</button></div>
 </section>
 
 <section class="panel">
@@ -73,7 +116,7 @@ summary{cursor:pointer;font-weight:600;padding:4px 0}
 
 <script>
 const $=id=>document.getElementById(id);
-const num=s=>parseFloat(String(s).replace(',','.'));
+const num=s=>parseFloat(String(s).replace(/[\s\u00a0\u202f]/g,'').replace(',','.'));
 const f=(n,d=2)=>n.toLocaleString('cs-CZ',{minimumFractionDigits:d,maximumFractionDigits:d});
 const KEY='objektivy-v2';
 let DB={
@@ -90,27 +133,97 @@ const NEW={lenses:{n:'Nový objektiv',a:1,b:1.5,m:''},projectors:{n:'Nový proje
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const same=(a,b)=>String(a||'').trim().toLowerCase()===String(b||'').trim().toLowerCase();
 
+let K=1,LAST=null,VSEL='';
+const UN={1:'m',100:'cm',1000:'mm'};
+const dec=()=>K===1?2:0, inDec=()=>K===1?3:K===100?1:0;
+const fu=m=>f(m*K,dec())+' '+UN[K];
+const fi=(n,d)=>n.toLocaleString('cs-CZ',{minimumFractionDigits:d,maximumFractionDigits:d,useGrouping:false});
 function syncHeight(){
   const r=num($('ar').value),w=num($('w').value),h=$('h');
   h.readOnly=r!==0;
-  if(r!==0)h.value=w>0?f(w/r,2):'';
+  if(r!==0)h.value=w>0?fi(w/r,inDec()):'';
+}
+const rng=(a,b,fn)=>a===b?fn(a):fn(a)+' až '+fn(b);
+function card(l,ok,w,d,t){
+  const dmin=l.a*w,dmax=l.b*w,wmin=d/l.b,wmax=d/l.a;
+  let note='';
+  if(!ok)note=t<l.a?`Obraz by byl menší než plátno (nejvíc ${fu(wmax)} na šířku, plátno má ${fu(w)}).`:`Obraz by byl větší než plátno (nejméně ${fu(wmin)} na šířku, plátno má ${fu(w)}).`;
+  return `<div class="lens ${ok?'ok':'no'}"><h3><span>${esc(l.n)} <small>(${l.a===l.b?f(l.a):f(l.a)+'–'+f(l.b)}:1${l.m?', '+esc(l.m):''})</small></span><em>${ok?'Vyhovuje':'Nevyhovuje'}</em></h3>
+  <p>Pro toto plátno: ${rng(dmin,dmax,fu)} od plátna.</p>
+  <p>Z ${fu(d)} dá obraz o šířce ${rng(wmin,wmax,fu)}.</p>${note?`<p>${note}</p>`:''}</div>`;
 }
 function calc(){
-  syncHeight();
-  const w=num($('w').value),d=num($('d').value),res=$('res');
-  if(!(w>0&&d>0)){$('tr').textContent='–';res.innerHTML='<p class="hint">Zadej šířku plátna a vzdálenost.</p>';return}
-  const t=d/w,pi=$('pj').value,mount=pi!==''&&DB.projectors[pi]?DB.projectors[pi].m:'';
-  $('tr').textContent=f(t,2)+':1';
-  const list=DB.lenses.filter(l=>l.a>0&&l.b>=l.a&&(!mount||!l.m||same(l.m,mount))).map(l=>({l,ok:t>=l.a-1e-9&&t<=l.b+1e-9}));
-  list.sort((x,y)=>y.ok-x.ok);
-  if(!list.length){res.innerHTML='<p class="hint">Žádný objektiv'+(mount?' pro bajonet „'+esc(mount)+'“':'')+' v databázi není.</p>';return}
-  res.innerHTML=list.map(({l,ok})=>{
-    const dmin=l.a*w,dmax=l.b*w,wmin=d/l.b,wmax=d/l.a;
-    let note='';
-    if(!ok)note=t<l.a?`Příliš dlouhý objektiv: obraz by byl širší než plátno (${f(wmax)} m).`:`Obraz by byl menší než plátno (nejvíc ${f(wmin)} m na šířku).`;
-    return `<div class="lens ${ok?'ok':'no'}"><h3><span>${esc(l.n)} <small>(${f(l.a)}–${f(l.b)}:1${l.m?', '+esc(l.m):''})</small></span><em>${ok?'Vyhovuje':'Nevyhovuje'}</em></h3>
-    <p>Pro toto plátno: ${f(dmin)} až ${f(dmax)} m od plátna.</p>
-    <p>Z ${f(d,1)} m dá obraz o šířce ${f(wmin)} až ${f(wmax)} m.</p>${note?`<p>${note}</p>`:''}</div>`}).join('');
+  const res=$('res'),sum=$('sum');
+  try{
+    syncHeight();
+    const w=num($('w').value)/K,d=num($('d').value)/K;
+    if(!(w>0&&d>0)){$('tr').textContent='–';sum.innerHTML='';LAST=null;buildViz();res.innerHTML='<p class="hint">Zadej šířku plátna a vzdálenost.</p>';return}
+    const t=d/w,pi=$('pj').value,mount=pi!==''&&DB.projectors[pi]?DB.projectors[pi].m:'';
+    $('tr').textContent=f(t,2)+':1';
+    const list=(DB.lenses||[]).filter(l=>l.a>0&&l.b>=l.a&&(!mount||!l.m||same(l.m,mount))).map(l=>({l,ok:t>=l.a-1e-9&&t<=l.b+1e-9}));
+    if(!list.length){sum.innerHTML='';LAST=null;buildViz();res.innerHTML='<p class="hint">Žádný objektiv'+(mount?' pro bajonet „'+esc(mount)+'“':'')+' v databázi není. Zkontroluj, že je databáze nahraná (Importovat).</p>';return}
+    list.forEach(x=>{x.r=x.ok?1:(t<x.l.a?x.l.a/t:t/x.l.b)});
+    const ok=list.filter(x=>x.ok),no=list.filter(x=>!x.ok).sort((p,q)=>p.r-q.r);
+    if(ok.length)sum.innerHTML='<p class="ok"><b>Vyhovuje:</b> '+ok.map(x=>esc(x.l.n)).join('; ')+'</p>';
+    else{
+      const c=no[0],l=c.l,small=t<l.a,pct=Math.round((small?1-t/l.a:t/l.b-1)*100);
+      const img=small?d/l.a:d/l.b;
+      sum.innerHTML='<p class="no"><b>Žádný objektiv nevyhovuje.</b> Nejblíž je <b>'+esc(l.n)+'</b> ('+(l.a===l.b?f(l.a):f(l.a)+'–'+f(l.b))+':1). '+
+        'Z '+fu(d)+' by dal obraz o šířce '+fu(img)+', tedy o '+(pct<1?'méně než 1':pct)+' % '+(small?'menší':'větší')+' než plátno ('+fu(w)+'). '+
+        'Aby sedělo přesně, potřebuješ vzdálenost '+(small?'alespoň '+fu(l.a*w):'nejvýš '+fu(l.b*w))+'.</p>';
+    }
+    res.innerHTML=ok.map(x=>card(x.l,true,w,d,t)).join('')+(no.length?`<details${ok.length?'':' open'}><summary>Nevyhovující objektivy (${no.length}), od nejbližšího</summary>${no.map(x=>card(x.l,false,w,d,t)).join('')}</details>`:'');
+    LAST={items:[...ok,...no],w,d,t,h:num($('h').value)/K};buildViz();
+  }catch(e){sum.innerHTML='';res.innerHTML='<p class="hint">Chyba výpočtu: '+esc(e.message)+'</p>'}
+}
+const dimH=(xa,xb,y,t)=>`<g class="dim"><line x1="${xa}" y1="${y}" x2="${xb}" y2="${y}"/><line x1="${xa}" y1="${y-5}" x2="${xa}" y2="${y+5}"/><line x1="${xb}" y1="${y-5}" x2="${xb}" y2="${y+5}"/><text x="${(xa+xb)/2}" y="${y-7}" text-anchor="middle">${t}</text></g>`;
+const dimV=(x,ya,yb,t)=>`<g class="dim"><line x1="${x}" y1="${ya}" x2="${x}" y2="${yb}"/><line x1="${x-5}" y1="${ya}" x2="${x+5}" y2="${ya}"/><line x1="${x-5}" y1="${yb}" x2="${x+5}" y2="${yb}"/><text transform="translate(${x+16} ${(ya+yb)/2}) rotate(-90)" text-anchor="middle">${t}</text></g>`;
+function plan(w,wi,d){
+  const mW=Math.max(w,wi),s=Math.min(430/d,150/mW),sw=w*s/2,si=wi*s/2,mh=Math.max(sw,si),x0=70,x1=x0+d*s,cy=mh+34,H=Math.round(cy+mh+78);
+  const diff=Math.abs(wi-w)>w*0.005;
+  return `<svg viewBox="0 0 640 ${H}" role="img" aria-label="Půdorys"><text class="lbl" x="6" y="16">Půdorys (pohled shora)</text>
+  <polygon class="cone" points="${x0},${cy} ${x1},${cy-si} ${x1},${cy+si}"/>
+  <line class="coneedge" x1="${x0}" y1="${cy}" x2="${x1}" y2="${cy-si}"/><line class="coneedge" x1="${x0}" y1="${cy}" x2="${x1}" y2="${cy+si}"/>
+  <rect class="box" x="${x0-60}" y="${cy-15}" width="60" height="30" rx="4"/><text class="lbl" x="${x0-30}" y="${cy+4}" text-anchor="middle">Projektor</text>
+  <line class="scr" x1="${x1}" y1="${cy-sw}" x2="${x1}" y2="${cy+sw}"/>
+  ${dimH(x0,x1,cy+mh+40,fu(d))}
+  ${dimV(x1+26,cy-sw,cy+sw,'plátno '+fu(w))}
+  ${diff?dimV(x1+70,cy-si,cy+si,'obraz '+fu(wi)):''}</svg>`;
+}
+function front(w,h,wi,hi){
+  const mW=Math.max(w,wi),mH=Math.max(h,hi),s=Math.min(380/mW,170/mH),pw=w*s,ph=h*s,iw=wi*s,ih=hi*s,cx=300,m=Math.max(ph,ih),cy=44+m/2,H=Math.round(m+100);
+  const diff=Math.abs(wi-w)>w*0.005;
+  return `<svg viewBox="0 0 640 ${H}" role="img" aria-label="Čelní pohled"><text class="lbl" x="6" y="16">Čelní pohled (od projektoru)</text>
+  <rect class="scrrect" x="${cx-pw/2}" y="${cy-ph/2}" width="${pw}" height="${ph}"/>
+  ${diff?`<rect class="img" x="${cx-iw/2}" y="${cy-ih/2}" width="${iw}" height="${ih}"/>`:''}
+  ${dimH(cx-pw/2,cx+pw/2,cy-m/2-10,'plátno '+fu(w))}
+  ${dimV(cx+Math.max(pw,iw)/2+24,cy-ph/2,cy+ph/2,fu(h))}
+  ${diff?`<text class="lbl" x="${cx}" y="${cy+m/2+22}" text-anchor="middle">čárkovaně: skutečný obraz ${fu(wi)} × ${fu(hi)}</text>`:''}</svg>`;
+}
+function buildViz(){
+  const vl=$('vl');
+  if(!LAST){$('viz').innerHTML='<p class="hint">Zadej šířku plátna a vzdálenost.</p>';$('meta').innerHTML='';vl.innerHTML='';return}
+  vl.innerHTML=LAST.items.map((x,i)=>`<option value="${i}">${esc(x.l.n)}${x.ok?'':' (nevyhovuje)'}</option>`).join('');
+  const k=LAST.items.findIndex(x=>x.l.n===VSEL);vl.value=String(k>=0?k:0);
+  drawViz();
+}
+function drawViz(){
+  if(!LAST)return;
+  const x=LAST.items[+$('vl').value]||LAST.items[0],l=x.l;
+  const {w,d,t}=LAST,h=LAST.h>0?LAST.h:w*9/16;
+  const tr=Math.min(Math.max(t,l.a),l.b),wi=d/tr,hi=wi*h/w;
+  const pj=$('pj').value!==''?$('pj').selectedOptions[0].text:'neurčen',sc=$('sc').value!==''?$('sc').selectedOptions[0].text:'vlastní rozměr';
+  const small=t<l.a,pct=Math.round(Math.abs(wi/w-1)*100);
+  const row=(a,b)=>`<tr><td>${a}</td><td>${b}</td></tr>`;
+  $('meta').innerHTML='<table class="meta">'+
+   row('Datum',new Date().toLocaleDateString('cs-CZ'))+row('Projektor',esc(pj))+
+   row('Objektiv',esc(l.n)+' ('+(l.a===l.b?f(l.a):f(l.a)+'–'+f(l.b))+':1)')+
+   row('Nastavení',l.a===l.b?'pevný objektiv':'poměr projekce nastavit na ≈ '+f(tr,2)+':1')+
+   row('Plátno',esc(sc)+', '+fu(w)+' × '+fu(h))+
+   row('Vzdálenost k plátnu',fu(d))+
+   row('Obraz na plátně',fu(wi)+' × '+fu(hi))+
+   row('Stav',x.ok?'Vyhovuje':'<span class="warn">POZOR: objektiv nevyhovuje, obraz bude o '+pct+' % '+(small?'menší':'větší')+' než plátno</span>')+'</table>';
+  $('viz').innerHTML=plan(w,wi,d)+front(w,h,wi,hi);
 }
 function fillSel(id,items,first){
   const el=$(id),v=el.value;
@@ -143,7 +256,7 @@ document.addEventListener('click',e=>{
 });
 $('sc').onchange=()=>{
   const s=DB.screens[$('sc').value];if(!s)return;
-  $('ar').value='0';$('w').value=String(s.w).replace('.',',');$('h').value=String(s.h).replace('.',',');calc();
+  $('ar').value='0';$('w').value=fi(s.w*K,inDec());$('h').value=fi(s.h*K,inDec());calc();
 };
 $('exp').onclick=()=>{
   const a=document.createElement('a');
@@ -163,7 +276,18 @@ $('file').onchange=async e=>{
   e.target.value='';
 };
 ['w','d','h','ar','pj'].forEach(id=>$(id).addEventListener('input',calc));
+function setUnit(nk,convert){
+  if(convert)['w','h','d'].forEach(id=>{const v=num($(id).value);if(v>0)$(id).value=fi(v/K*nk,nk===1?3:nk===100?1:0)});
+  K=nk;$('un').value=String(K);
+  document.querySelectorAll('.u').forEach(e=>e.textContent=UN[K]);
+  try{localStorage.setItem('objektivy-unit',K)}catch(e){}
+  calc();
+}
+$('un').onchange=()=>setUnit(+$('un').value,true);
+$('vl').onchange=()=>{VSEL=LAST&&LAST.items[+$('vl').value]?LAST.items[+$('vl').value].l.n:'';drawViz()};$('prt').onclick=()=>window.print();
+DB.lenses=DB.lenses||[];DB.projectors=DB.projectors||[];DB.screens=DB.screens||[];
 drawAll();
+try{const u=+localStorage.getItem('objektivy-unit');if(u&&UN[u]&&u!==1)setUnit(u,true)}catch(e){}
 </script>
 </body>
 </html>
