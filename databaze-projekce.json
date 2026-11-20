@@ -467,62 +467,84 @@
   {
    "n": "Panasonic PT-RZ21K",
    "m": "Panasonic D75LE · WUXGA",
-   "r": "16:10"
+   "r": "16:10",
+   "lm": 20000,
+   "res": "1920x1200"
   },
   {
    "n": "Panasonic PT-RQ35K",
    "m": "Panasonic D75LE · WUXGA",
-   "r": "16:10"
+   "r": "16:10",
+   "lm": 30500,
+   "res": "3840x2400"
   },
   {
    "n": "Panasonic PT-RZ12K",
    "m": "Panasonic D75LE · RZ12K",
-   "r": "16:10"
+   "r": "16:10",
+   "lm": 12000,
+   "res": "1920x1200"
   },
   {
    "n": "Panasonic PT-RQ32K",
    "m": "Panasonic D75LE · 4K+",
-   "r": "16:10"
+   "r": "16:10",
+   "lm": 26000,
+   "res": "5120x3200"
   },
   {
    "n": "Panasonic PT-RZ970",
    "m": "Panasonic 1DLP ET-DLE",
-   "r": "16:10"
+   "r": "16:10",
+   "lm": 9400,
+   "res": "1920x1200"
   },
   {
    "n": "Panasonic PT-MZ770",
    "m": "Panasonic MZ770",
-   "r": "16:10"
+   "r": "16:10",
+   "lm": 8000,
+   "res": "1920x1200"
   },
   {
    "n": "Panasonic PT-MZ882W",
    "m": "Panasonic MZ882W",
-   "r": "16:10"
+   "r": "16:10",
+   "lm": 8200,
+   "res": "1920x1200"
   },
   {
    "n": "Panasonic PT-EZ570",
    "m": "Panasonic EZ570",
-   "r": "16:10"
+   "r": "16:10",
+   "res": "1920x1200"
   },
   {
    "n": "Panasonic PT-VZ585N",
    "m": "Panasonic PT-VZ585N",
-   "r": "16:10"
+   "r": "16:10",
+   "lm": 5000,
+   "res": "1920x1200"
   },
   {
    "n": "NEC NP-PA621U",
    "m": "NEC PA · WUXGA",
-   "r": "16:10"
+   "r": "16:10",
+   "lm": 6200,
+   "res": "1920x1200"
   },
   {
    "n": "NEC NP-PA722X",
    "m": "NEC PA · XGA",
-   "r": "4:3"
+   "r": "4:3",
+   "lm": 7200,
+   "res": "1024x768"
   },
   {
    "n": "Hitachi CP-X9100",
    "m": "Hitachi CP-X9100 · XGA",
-   "r": "4:3"
+   "r": "4:3",
+   "res": "1024x768"
   }
  ],
  "screens": [

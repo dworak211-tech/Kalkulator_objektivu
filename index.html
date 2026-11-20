@@ -4,6 +4,12 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Kalkulátor objektivu</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0a5a8c">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Objektiv">
 <style>
 :root{--bg:#eef1f4;--panel:#fff;--ink:#16212b;--mute:#5b6b79;--line:#ccd5dd;--ok:#0b7a4b;--okbg:#dff3e8;--no:#9a3a2b;--nobg:#f6e3df;--acc:#0a5a8c}
 @media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#10171d;--panel:#18222b;--ink:#e6edf3;--mute:#93a4b3;--line:#2c3a46;--ok:#58d19a;--okbg:#14352a;--no:#f0a090;--nobg:#3a211c;--acc:#6cb8ee}}
@@ -58,11 +64,17 @@ table.meta{width:100%;border-collapse:collapse;margin-top:12px}
 table.meta td{border-bottom:1px solid var(--line);padding:6px 8px;vertical-align:top;font-size:.95rem}
 table.meta td:first-child{color:var(--mute);width:36%}
 .warn{color:var(--no);font-weight:700}
+.po{display:none}
+.chk{flex-direction:row;align-items:center;gap:10px;color:var(--ink);font-size:1rem}
+.chk input{min-height:auto;width:20px;height:20px}
+.bl{fill:var(--acc);opacity:.18;stroke:var(--acc);stroke-width:1.5}
 @media print{
  @page{size:A4;margin:12mm}
  :root,:root:not([data-theme=light]){--bg:#fff;--panel:#fff;--ink:#000;--mute:#333;--line:#999;--ok:#0b7a4b;--okbg:#fff;--no:#b00020;--nobg:#fff;--acc:#0a5a8c}
  body{padding:0;background:#fff}
- main>section:not(#sheet),main>h1,.np{display:none!important}
+ main>section:not(#sheet):not(#blendp.on),main>h1,.np{display:none!important}
+ body.blend #sheet{display:none!important}
+ .po{display:block!important}
  #sheet{border:none;padding:0;margin:0}
  input,textarea{border:none;background:none;padding:0;min-height:0;resize:none;font-size:1rem}
  svg{break-inside:avoid}
@@ -92,14 +104,24 @@ table.meta td:first-child{color:var(--mute);width:36%}
     <label>Boční odsazení projektoru (<span class="u">m</span>; vpravo +, vlevo −)<input id="ho" inputmode="decimal" value="0"></label>
     <label>Montáž projektoru<select id="mt"><option value="f">Stůl / podlaha</option><option value="c">Strop</option></select></label>
   </div>
+  <div class="grid">
+    <label>Zisk plátna<input id="gn" inputmode="decimal" value="1"></label>
+    <label>Okolní světlo<select id="am"><option value="100">Zatemněno (cíl 100 cd/m²)</option><option value="200" selected>Tlumené světlo (cíl 200 cd/m²)</option><option value="300">Běžné světlo (cíl 300 cd/m²)</option></select></label>
+  </div>
   <p class="hint">Vzdálenost se měří od objektivu k plátnu. Výška a odsazení slouží ke kontrole posunu objektivu (lens shift); 0 znamená projektor přesně ve středu plátna.</p>
 </section>
 
 <section class="panel" aria-live="polite">
   <div class="big"><b id="tr">–</b><span>potřebný poměr projekce (vzdálenost : šířka obrazu)</span></div>
   <p class="hint" id="note"></p>
+  <p class="hint" id="bright"></p>
   <div id="sum" class="sum"></div>
   <div id="res"></div>
+</section>
+
+<section class="panel" id="revp" aria-label="Co vyhovuje při této vzdálenosti">
+  <h2>Co vyhovuje při této vzdálenosti</h2>
+  <div id="rev"></div>
 </section>
 
 <section class="panel" id="sheet" aria-label="Schéma a podklad pro technika">
@@ -113,6 +135,24 @@ table.meta td:first-child{color:var(--mute);width:36%}
   <div id="viz"></div>
   <p class="hint">Schéma je orientační. Vzdálenost se měří od objektivu k plátnu. Posun objektivu v obou osách zároveň bývá menší než součet limitů, ověř ho v manuálu projektoru.</p>
   <div class="acts np"><button id="prt" type="button">Vytisknout / uložit PDF</button></div>
+</section>
+
+<section class="panel" id="blendp" aria-label="Edge blending">
+  <h2>Edge blending (více projektorů)</h2>
+  <label class="chk np"><input type="checkbox" id="eb"> Počítat edge blending: plátno z výše zadaných rozměrů se pokryje více projektory stejného typu</label>
+  <div id="ebbody" hidden>
+    <p class="po"><b id="bev"></b> <span id="bnt"></span></p>
+    <div class="grid" style="margin-top:12px">
+      <label>Projektorů vodorovně<input id="bn" inputmode="numeric" value="2"></label>
+      <label>Projektorů svisle<input id="bm" inputmode="numeric" value="1"></label>
+      <label>Překrytí vodorovně (%)<input id="bo" inputmode="decimal" value="15"></label>
+      <label>Překrytí svisle (%)<input id="bv" inputmode="decimal" value="15"></label>
+      <label>Rozteč projektorů vodorovně (<span class="u">m</span>), prázdné = každý proti svému obrazu<input id="bp" inputmode="decimal" value=""></label>
+    </div>
+    <p class="hint">Počítá se s projektorem, plátnem (celý blendovaný obraz), vzdáleností a polohou objektivu zadanými výše. Výsledky nahoře platí pro jeden projektor.</p>
+    <div id="bout"></div>
+    <div class="acts np"><button id="bprt" type="button">Vytisknout / uložit PDF</button></div>
+  </div>
 </section>
 
 <section class="panel">
@@ -143,8 +183,8 @@ function norm(j,base){
   if(!Array.isArray(L))throw new Error('formát');
   return{
     lenses:L.map(x=>({n:String(x.n),a:+x.a||0,b:+x.b||0,m:String(x.m||''),su:nn(x.su),sd:nn(x.sd),sh:nn(x.sh)})),
-    projectors:Array.isArray(j.projectors)?j.projectors.map(x=>({n:String(x.n),m:String(x.m||''),r:String(x.r||'')})):base.projectors,
-    screens:Array.isArray(j.screens)?j.screens.map(x=>({n:String(x.n),w:+x.w||0,h:+x.h||0})):base.screens};
+    projectors:Array.isArray(j.projectors)?j.projectors.map(x=>({n:String(x.n),m:String(x.m||''),r:String(x.r||''),lm:nn(x.lm),res:String(x.res||'')})):base.projectors,
+    screens:Array.isArray(j.screens)?j.screens.map(x=>({n:String(x.n),w:+x.w||0,h:+x.h||0,g:nn(x.g)})):base.screens};
 }
 try{const s=localStorage.getItem(KEY);if(s)DB=norm(JSON.parse(s),DB)}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(DB))}catch(e){}};
@@ -166,6 +206,13 @@ function syncHeight(){
 }
 
 /* ---------- výpočet ---------- */
+function mkCtx(w,h,d,P,vo,ho,ceil){const arP=P?parseAR(P.r):0,Wp=arP?Math.max(w,h*arP):w;return{w,h,d,t:d/Wp,Wp,arP,vo,ho,ceil}}
+function bright(c,P){
+  if(!P||!(P.lm>0))return null;
+  const g=num($('gn').value)>0?num($('gn').value):1,tgt=+$('am').value;
+  const Hp=c.arP?c.Wp/c.arP:c.h,area=c.Wp*Hp,lux=P.lm/area,nit=lux*g/Math.PI,need=tgt*Math.PI*area/g;
+  return{lux,nit,need,tgt,g,ok:nit>=tgt,lm:P.lm};
+}
 function evalLens(l,c){
   const{t,d,w,h,arP,vo,ho,ceil}=c;
   const tr=Math.min(Math.max(t,l.a),l.b),wi=d/tr,hi=arP?wi/arP:wi*h/w;
@@ -197,18 +244,20 @@ function card(x,c){
   <p>Pro toto plátno: ${rng(dmin,dmax,fu)} od plátna.</p>
   <p>Z ${fu(d)} dá obraz o šířce ${rng(wmin,wmax,fu)}.</p>${note?`<p>${note}</p>`:''}${shiftHtml(x,c)}</div>`;
 }
-function calc(){
+function calc(){calc0();try{rev()}catch(e){}try{blend()}catch(e){$('bout').innerHTML='<p class="hint">Chyba výpočtu edge blendingu: '+esc(e.message)+'</p>'}}
+function calc0(){
   const res=$('res'),sum=$('sum');
   try{
     syncHeight();
     const w=num($('w').value)/K,d=num($('d').value)/K;
-    if(!(w>0&&d>0)){$('tr').textContent='–';$('note').textContent='';sum.innerHTML='';LAST=null;buildViz();res.innerHTML='<p class="hint">Zadej šířku plátna a vzdálenost.</p>';return}
+    if(!(w>0&&d>0)){$('tr').textContent='–';$('note').textContent='';$('bright').innerHTML='';sum.innerHTML='';LAST=null;buildViz();res.innerHTML='<p class="hint">Zadej šířku plátna a vzdálenost.</p>';return}
     let h=num($('h').value)/K;if(!(h>0))h=w*9/16;
     const vo=(num($('vo').value)||0)/K,ho=(num($('ho').value)||0)/K,ceil=$('mt').value==='c';
-    const pi=$('pj').value,P=pi!==''?DB.projectors[pi]:null,mount=P?P.m:'',arP=P?parseAR(P.r):0;
-    const Wp=arP?Math.max(w,h*arP):w,t=d/Wp;
-    const c={w,h,d,t,Wp,arP,vo,ho,ceil};
+    const pi=$('pj').value,P=pi!==''?DB.projectors[pi]:null,mount=P?P.m:'';
+    const c=mkCtx(w,h,d,P,vo,ho,ceil),{Wp,t}=c;
     $('tr').textContent=f(t,2)+':1';
+    c.br=bright(c,P);
+    $('bright').innerHTML=c.br?`Jas na plátně: ≈ ${f(c.br.lux,0)} lx, ≈ ${f(c.br.nit,0)} cd/m² (zisk ${f(c.br.g,1)}, projektor ${f(c.br.lm,0)} lm). Pro zvolené okolní světlo (cíl ≥ ${c.br.tgt} cd/m²) ${c.br.ok?'<b>jas stačí</b>':'<b>jas nestačí</b>, potřebuješ aspoň ≈ '+f(c.br.need,0)+' lm'}. Jmenovitý jas, skutečný bývá po průchodu objektivem a stárnutím zdroje nižší.`:(P?'Jas projektoru není v databázi.':'');
     $('note').textContent=Wp>w*1.002?`Projektor má poměr stran ${P.r}, plátno je užší, proto se obraz promítá na šířku ${fu(Wp)} (poměr se počítá z ní, ne z šířky plátna ${fu(w)}).`:'';
     const list=(DB.lenses||[]).filter(l=>l.a>0&&l.b>=l.a&&(!mount||!l.m||same(l.m,mount))).map(l=>evalLens(l,c));
     if(!list.length){sum.innerHTML='';LAST=null;buildViz();res.innerHTML='<p class="hint">Žádný objektiv'+(mount?' pro bajonet „'+esc(mount)+'“':'')+' v databázi není. Zkontroluj, že je databáze nahraná.</p>';return}
@@ -224,6 +273,88 @@ function calc(){
     res.innerHTML=ok.map(x=>card(x,c)).join('')+(no.length?`<details${ok.length?'':' open'}><summary>Nevyhovující objektivy (${no.length}), od nejbližšího</summary>${no.map(x=>card(x,c)).join('')}</details>`:'');
     LAST={items:[...ok,...no],c,P};buildViz();
   }catch(e){sum.innerHTML='';res.innerHTML='<p class="hint">Chyba výpočtu: '+esc(e.message)+'</p>'}
+}
+
+/* ---------- co vyhovuje při dané vzdálenosti ---------- */
+function rev(){
+  const el=$('rev'),d=num($('d').value)/K;
+  if(!(d>0)){el.innerHTML='<p class="hint">Zadej vzdálenost.</p>';return}
+  const pi=$('pj').value,P=pi!==''?DB.projectors[pi]:null,mount=P?P.m:'';
+  if(!P){el.innerHTML='<p class="hint">Vyber projektor, aby seznam odpovídal objektivům a poměru stran, které na něj pasují.</p>';return}
+  const vo=(num($('vo').value)||0)/K,ho=(num($('ho').value)||0)/K,ceil=$('mt').value==='c';
+  const lenses=(DB.lenses||[]).filter(l=>l.a>0&&l.b>=l.a&&(!mount||!l.m||same(l.m,mount)));
+  if(!lenses.length){el.innerHTML='<p class="hint">Žádné objektivy v databázi.</p>';return}
+  const arP=P?parseAR(P.r):0;
+  const wmin=Math.min(...lenses.map(l=>d/l.b)),wmax=Math.max(...lenses.map(l=>d/l.a));
+  const rows=(DB.screens||[]).filter(s=>s.w>0&&s.h>0).map(s=>{
+    const c=mkCtx(s.w,s.h,d,P,vo,ho,ceil);
+    return{s,ok:lenses.map(l=>evalLens(l,c)).filter(x=>x.ok)};
+  }).sort((p,q)=>p.s.w-q.s.w);
+  const fit=rows.filter(r=>r.ok.length),miss=rows.length-fit.length;
+  el.innerHTML=`<p class="hint" style="margin-top:0">Z ${fu(d)}${P?' s projektorem '+esc(P.n):''} lze s jeho objektivy získat obraz o šířce od ${fu(wmin)} do ${fu(wmax)}.</p>`+
+    (fit.length?fit.map(r=>`<div class="lens ok"><h3><span>${esc(r.s.n)}</span><em>${r.ok.length} ${r.ok.length===1?'objektiv':r.ok.length<5?'objektivy':'objektivů'}</em></h3><p>${r.ok.map(x=>esc(x.l.n)).join('; ')}</p></div>`).join(''):'<p class="hint">Při této vzdálenosti nevyhovuje žádné plátno z databáze.</p>')+
+    (miss&&fit.length?`<p class="hint">Dalších ${miss} pláten při této vzdálenosti nevyhovuje žádnému objektivu.</p>`:'');
+}
+
+/* ---------- edge blending ---------- */
+function blendSvg(N,M,wi,hi,oh,ov,w,h){
+  const px=wi*(1-oh),py=hi*(1-ov),Wt=wi+(N-1)*px,Ht=hi+(M-1)*py,mW=Math.max(Wt,w),mH=Math.max(Ht,h);
+  const s=Math.min(520/mW,210/mH),x0=60,y0=44,cw=Wt*s,ch=Ht*s;
+  let r='';
+  for(let j=0;j<M;j++)for(let i=0;i<N;i++){
+    r+=`<rect class="bl" x="${x0+i*px*s}" y="${y0+j*py*s}" width="${wi*s}" height="${hi*s}"/><text class="lbl" x="${x0+i*px*s+wi*s/2}" y="${y0+j*py*s+hi*s/2+4}" text-anchor="middle">${M>1?'P'+(j+1)+'.'+(i+1):'P'+(i+1)}</text>`;
+  }
+  return`<svg viewBox="0 0 640 ${Math.round(ch+130)}" role="img" aria-label="Schéma edge blendingu"><text class="lbl" x="6" y="16">Rozložení obrazů (čelní pohled; tmavší pruhy jsou překrytí)</text>
+  <rect class="img" x="${x0-(Math.max(0,(w-Wt)/2))*s}" y="${y0-(Math.max(0,(h-Ht)/2))*s}" width="${w*s}" height="${h*s}" style="stroke:var(--mute)"/>
+  ${r}
+  ${dimH(x0,x0+cw,y0+ch+34,'celkem '+fu(Wt))}
+  ${dimV(x0+cw+Math.max(0,(w-Wt)/2)*s+30,y0,y0+ch,'celkem '+fu(Ht))}</svg>`;
+}
+function blend(){
+  const on=$('eb').checked;
+  document.body.classList.toggle('blend',on);$('blendp').classList.toggle('on',on);$('ebbody').hidden=!on;
+  if(!on)return;
+  $('bev').textContent=$('ev').value;$('bnt').textContent=$('nt').value;
+  const out=$('bout'),w=num($('w').value)/K,d=num($('d').value)/K;
+  let h=num($('h').value)/K;if(!(h>0))h=w*9/16;
+  const pi=$('pj').value,P=pi!==''?DB.projectors[pi]:null,arP=P?parseAR(P.r):0;
+  if(!P||!arP){out.innerHTML='<p class="hint">Vyber projektor s vyplněným poměrem stran (všechny projektory v sestavě jsou stejného typu).</p>';return}
+  if(!(w>0&&d>0)){out.innerHTML='<p class="hint">Zadej šířku plátna a vzdálenost.</p>';return}
+  const N=Math.min(10,Math.max(1,Math.round(num($('bn').value)||1))),M=Math.min(6,Math.max(1,Math.round(num($('bm').value)||1)));
+  const oh=N>1?Math.min(0.5,Math.max(0,(num($('bo').value)||0)/100)):0,ov=M>1?Math.min(0.5,Math.max(0,(num($('bv').value)||0)/100)):0;
+  const fw=N-(N-1)*oh,fh=M-(M-1)*ov,wiW=w/fw,wiH=arP*h/fh,wi=Math.min(wiW,wiH),hi=wi/arP,Wt=wi*fw,Ht=hi*fh,t=d/wi;
+  const vo=(num($('vo').value)||0)/K,ceil=$('mt').value==='c',bpv=num($('bp').value)/K;
+  const pitch=wi*(1-oh),maxLat=(N>1&&bpv>0)?(N-1)/2*Math.abs(pitch-bpv):0;
+  const c={w:wi,h:hi,d,t,Wp:wi,arP,vo,ho:maxLat,ceil};
+  const lenses=(DB.lenses||[]).filter(l=>l.a>0&&l.b>=l.a&&(!P.m||!l.m||same(l.m,P.m)));
+  const items=lenses.map(l=>evalLens(l,c)),ok=items.filter(x=>x.ok),no=items.filter(x=>!x.ok).sort((p,q)=>p.r-q.r);
+  const rs=String(P.res||'').match(/(\d+)\s*[x×]\s*(\d+)/),row=(x,y)=>`<tr><td>${x}</td><td>${y}</td></tr>`;
+  let resTxt='';
+  if(rs){const pw=+rs[1],ph=+rs[2],ow=Math.round(oh*pw),ovv=Math.round(ov*ph);
+    resTxt=row('Překrytí v pixelech',(N>1?f(ow,0)+' px vodorovně':'–')+(M>1?', '+f(ovv,0)+' px svisle':''))+
+           row('Výsledné rozlišení celku',f(N*pw-(N-1)*ow,0)+' × '+f(M*ph-(M-1)*ovv,0)+' px (rozlišení jednoho projektoru '+pw+' × '+ph+')')}
+  const br=bright(c,P);
+  const warns=[];
+  if(N>1&&(oh<0.10||oh>0.30))warns.push('Vodorovné překrytí '+f(oh*100,0)+' % je mimo obvyklých 10–25 %.');
+  if(M>1&&(ov<0.10||ov>0.30))warns.push('Svislé překrytí '+f(ov*100,0)+' % je mimo obvyklých 10–25 %.');
+  if(wiH<wiW*0.995)warns.push('Šířku obrazu omezuje výška plátna: celek bude užší než plátno o '+fu(w-Wt)+'.');
+  if(wiW<wiH*0.995)warns.push('Šířka plátna omezuje obraz: celek bude nižší než plátno o '+fu(h-Ht)+'.');
+  let lensTxt;
+  if(ok.length)lensTxt=ok.map(x=>esc(x.l.n)+' (vzdálenost '+rng(x.l.a*wi,x.l.b*wi,fu)+')').join('<br>');
+  else{const x=no[0];lensTxt=x?'<span class="warn">Žádný objektiv nevyhovuje.</span> Nejblíž je '+esc(x.l.n)+': potřebuješ vzdálenost '+rng(x.l.a*wi,x.l.b*wi,fu)+(x.S&&!x.S.ok?', posun objektivu nestačí (povolená výška středu objektivu '+fs(x.S.vmin)+' až '+fs(x.S.vmax)+')':'')+'.':'Žádné objektivy v databázi.'}
+  out.innerHTML='<table class="meta">'+
+    row('Projektor',esc(P.n)+' ('+esc(P.r)+'), '+N+' × '+M+' = '+N*M+' ks')+
+    row('Obraz jednoho projektoru',fu(wi)+' × '+fu(hi))+
+    row('Potřebný poměr projekce',f(t,2)+':1 (vzdálenost '+fu(d)+')')+
+    (N>1?row('Překrytí vodorovně',f(oh*100,0)+' % = '+fu(oh*wi)+', rozteč středů obrazů '+fu(pitch)):'')+
+    (M>1?row('Překrytí svisle',f(ov*100,0)+' % = '+fu(ov*hi)+', rozteč řad '+fu(hi*(1-ov))):'')+
+    row('Výsledný celek',fu(Wt)+' × '+fu(Ht)+' (plátno '+fu(w)+' × '+fu(h)+')')+
+    resTxt+
+    row('Vyhovující objektivy',lensTxt)+
+    (maxLat>0?row('Boční odsazení krajních projektorů','±'+fu(maxLat)+' od středu svého obrazu'):'')+
+    (br?row('Jas po slepení',`≈ ${f(br.lux,0)} lx, ≈ ${f(br.nit,0)} cd/m² (zisk ${f(br.g,1)}), ${br.ok?'dostatečný':'<span class="warn">nedostatečný, potřeba ≈ '+f(br.need,0)+' lm na projektor</span>'}`):'')+
+    '</table>'+(warns.length?'<p class="warn">'+warns.join(' ')+'</p>':'')+blendSvg(N,M,wi,hi,oh,ov,w,h)+
+    '<p class="hint">Pozor: u edge blendingu je potřeba stejná zoomová poloha a stejný objektiv u všech projektorů. Jas v překrytí zajišťuje blendovací křivka (v projektoru nebo procesoru). Posun objektivu se kontroluje pro krajní projektory.</p>';
 }
 
 /* ---------- schéma ---------- */
@@ -292,6 +423,7 @@ function drawViz(){
    row('Obraz projektoru',fu(x.wi)+' × '+fu(x.hi))+
    row('Poloha objektivu',(c.ceil?'strop, ':'stůl/podlaha, ')+'výška '+fs(c.vo)+' vůči středu plátna, bokem '+fs(c.ho))+
    (x.S?row('Povolená poloha',fs(x.S.vmin)+' až '+fs(x.S.vmax)+' výškově, bokem ±'+fu(x.S.hmax)):'')+
+   (c.br?row('Jas na plátně','≈ '+f(c.br.lux,0)+' lx, ≈ '+f(c.br.nit,0)+' cd/m² (zisk '+f(c.br.g,1)+'), '+(c.br.ok?'dostatečný':'<span class="warn">nedostatečný, potřeba ≈ '+f(c.br.need,0)+' lm</span>')):'')+
    row('Stav',stav)+'</table>';
   $('viz').innerHTML=plan(c.w,x.wi,c.d,c.ho)+side(c.h,x.hi,c.d,c.vo)+front(c.w,c.h,x.wi,x.hi,c.vo,c.ho);
 }
@@ -299,8 +431,8 @@ function drawViz(){
 /* ---------- editor databáze ---------- */
 const SCH={
  lenses:[['n','Název','t'],['a','Poměr min','n'],['b','Poměr max','n'],['m','Bajonet','t'],['su','Posun ↑ %','o'],['sd','Posun ↓ %','o'],['sh','Posun ↔ %','o']],
- projectors:[['n','Název','t'],['m','Bajonet','t'],['r','Poměr stran (16:10)','t']],
- screens:[['n','Název','t'],['w','Šířka m','n'],['h','Výška m','n']]};
+ projectors:[['n','Název','t'],['m','Bajonet','t'],['r','Poměr stran (16:10)','t'],['lm','Jas (lm)','o'],['res','Rozlišení (1920x1200)','t']],
+ screens:[['n','Název','t'],['w','Šířka m','n'],['h','Výška m','n'],['g','Zisk','o']]};
 const NEW={lenses:{n:'Nový objektiv',a:1,b:1.5,m:''},projectors:{n:'Nový projektor',m:'',r:'16:10'},screens:{n:'Nové plátno',w:3,h:1.69}};
 function fillSel(id,items,first){
   const el=$(id),v=el.value;
@@ -336,7 +468,7 @@ document.addEventListener('click',e=>{
 });
 $('sc').onchange=()=>{
   const s=DB.screens[$('sc').value];if(!s)return;
-  $('ar').value='0';$('w').value=fi(s.w*K,inDec());$('h').value=fi(s.h*K,inDec());calc();
+  $('ar').value='0';$('w').value=fi(s.w*K,inDec());$('h').value=fi(s.h*K,inDec());$('gn').value=fi(s.g>0?s.g:1,1);calc();
 };
 $('exp').onclick=()=>{
   const a=document.createElement('a');
@@ -350,24 +482,26 @@ $('file').onchange=async e=>{
   e.target.value='';
 };
 function setUnit(nk,convert){
-  if(convert)['w','h','d','vo','ho'].forEach(id=>{const v=num($(id).value);if(isFinite(v)&&v!==0)$(id).value=fi(v/K*nk,nk===1?3:nk===100?1:0)});
+  if(convert)['w','h','d','vo','ho','bp'].forEach(id=>{const v=num($(id).value);if(isFinite(v)&&v!==0)$(id).value=fi(v/K*nk,nk===1?3:nk===100?1:0)});
   K=nk;$('un').value=String(K);
   document.querySelectorAll('.u').forEach(e=>e.textContent=UN[K]);
   try{localStorage.setItem('objektivy-unit',K)}catch(e){}
   calc();
 }
 $('un').onchange=()=>setUnit(+$('un').value,true);
-['w','d','h','ar','pj','vo','ho','mt'].forEach(id=>$(id).addEventListener('input',calc));
+['w','d','h','ar','pj','vo','ho','mt','gn','am','eb','bn','bm','bo','bv','bp'].forEach(id=>$(id).addEventListener('input',calc));
 $('vl').onchange=()=>{VSEL=LAST&&LAST.items[+$('vl').value]?LAST.items[+$('vl').value].l.n:'';drawViz()};
+$('eb').addEventListener('change',calc);
 $('prt').onclick=()=>window.print();
+$('bprt').onclick=()=>{blend();window.print()};
 
 /* ---------- start ---------- */
 async function loadRepo(){
   try{
-    const r=await fetch(SRC+'?t='+Date.now(),{cache:'no-store'});
+    const r=await fetch(SRC,{cache:'no-cache'});
     if(!r.ok)throw new Error(r.status);
     DB=norm(await r.json(),DB);save();drawAll();
-    $('dbstat').textContent='Databáze načtena ze souboru '+SRC+' v repozitáři.';
+    $('dbstat').textContent=navigator.onLine===false?'Offline: používám poslední uloženou kopii souboru '+SRC+'.':'Databáze načtena ze souboru '+SRC+' v repozitáři.';
   }catch(e){
     $('dbstat').textContent='Soubor '+SRC+' se nepodařilo načíst, používám data uložená v prohlížeči.';
   }
@@ -375,6 +509,8 @@ async function loadRepo(){
 drawAll();
 try{const u=+localStorage.getItem('objektivy-unit');if(u&&UN[u]&&u!==1)setUnit(u,true)}catch(e){}
 loadRepo();
+
+if('serviceWorker' in navigator&&/^https?:$/.test(location.protocol))navigator.serviceWorker.register('sw.js').catch(()=>{});
 </script>
 </body>
 </html>
